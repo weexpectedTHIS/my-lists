@@ -1,0 +1,21 @@
+.note {
+  padding: 5px;
+  border-radius: 4px;
+  background-color: #EEEEEE;
+  margin-bottom: 3px;
+}
+.note:last-child {
+  margin-bottom: 0px;
+}
+
+.display_none {
+  display: none;
+}
+
+.controls {
+  margin-left: 8px;
+}
+
+.form_list_rename, .form_list_destroy, .form_item_renotate, .form_item_destroy {
+  display: inline;
+}
