@@ -3,6 +3,8 @@ require 'sinatra'
 require 'sinatra/activerecord'
 require 'rack-flash'
 
+set :database, 'sqlite:///development.db'
+
 class List < ActiveRecord::Base
   has_many :items, :dependent => :destroy
 
