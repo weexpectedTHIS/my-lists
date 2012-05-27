@@ -1,7 +1,7 @@
 require 'rubygems'
 require 'sinatra'
 require 'sinatra/activerecord'
-require 'rack-flash'
+#require 'rack-flash'
 
 class List < ActiveRecord::Base
   has_many :items, :dependent => :destroy
