@@ -12,12 +12,6 @@
     <meta name="viewport" content="width=device-width, height=device-height, user-scalable=no" />
   </head>
   <body>
-    <% if flash[:error] %>
-      <div style="color: red;"><%= flash[:error] %></div>
-    <% end %>
-    <% if flash[:success] %>
-      <div style="color: green;"><%= flash[:success] %></div>
-    <% end %>
     <% if @current_username %>
       <div><%= @current_username %>'s Lists (<a href="/logout">logout</a>)</div>
     <% end %>

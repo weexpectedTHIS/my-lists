@@ -27,7 +27,7 @@ class Item < ActiveRecord::Base
 end
 
 enable :sessions
-use Rack::Flash
+#use Rack::Flash
 
 before do
   unless ['/login', '/logout'].any?{|p| p == request.env['REQUEST_URI'] }
@@ -46,11 +46,11 @@ end
 post '/login' do
   if params[:username] && params[:username].to_s.match(/^[a-zA-Z0-9]{4,}$/)
     response.set_cookie('my_list_username', :value => params[:username], :expires => Date.today.next_year(2).to_time)
-    flash[:success] = 'Login successful'
+#    flash[:success] = 'Login successful'
     redirect '/'
   else
-    flash[:error] = 'Username can only be numbers and letters and must be at least 4 characters long'
-    flash[:username] = params[:username]
+#    flash[:error] = 'Username can only be numbers and letters and must be at least 4 characters long'
+#    flash[:username] = params[:username]
     redirect '/login'
   end
 end
