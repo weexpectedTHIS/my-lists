@@ -23,6 +23,10 @@ $(document).ready(function(){
       $(this).next().show().find('input:first-child').focus();
       $(this).hide();
     });
+    $('.link_list_prioritize').click(function(){
+      $(this).next().show().find('select:first-child').focus();
+      $(this).hide();
+    });
     $('.link_list_rename').click(function(){
       $(this).next().show().find('input:first-child').focus();
       $(this).hide();
@@ -46,6 +50,10 @@ $(document).ready(function(){
 
     $('.link_item_edit').click(function(){
       $(this).next().show().find('input:first-child').focus();
+      $(this).hide();
+    });
+    $('.link_item_prioritize').click(function(){
+      $(this).next().show().find('select:first-child').focus();
       $(this).hide();
     });
     $('.link_item_renotate').click(function(){

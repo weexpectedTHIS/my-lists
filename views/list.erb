@@ -12,10 +12,21 @@
   <div>
     <% @list.items.each do |item| %>
       <div class="note">
-        <%= item.note %>
+        <%= item.ordering + 1 %> <%= item.note %>
         <span class="controls">
           <a href="#" class="link_item_edit">edit</a>
           <span class="display_none">
+            <a href="#" class="link_item_prioritize">prioritize</a>
+            <form action="/items/update/<%= item.id %>" method="post" class="form_item_prioritize" style="display: none;">
+              <span>
+                <select name="ordering">
+                  <% (1..@list.items.size).each do |priority| %>
+                    <option value="<%= priority - 1 %>" <%= 'selected' if priority == (item.ordering + 1) %>><%= priority %></option>
+                  <% end %>
+                </select>
+                <input type="submit" value="Prioritize">
+              </span>
+            </form>
             <a href="#" class="link_item_renotate">renotate</a>
             <form action="/items/update/<%= item.id %>" method="post" class="form_item_renotate" style="display: none;">
               <span>

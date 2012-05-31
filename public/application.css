@@ -16,6 +16,6 @@
   margin-left: 8px;
 }
 
-.form_list_rename, .form_list_destroy, .form_item_renotate, .form_item_destroy {
+.form_list_prioritize, .form_list_rename, .form_list_destroy, .form_item_prioritize, .form_item_renotate, .form_item_destroy {
   display: inline;
 }

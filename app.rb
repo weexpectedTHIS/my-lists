@@ -6,12 +6,25 @@ require 'rack-flash'
 set :database, 'sqlite:///development.db'
 
 class List < ActiveRecord::Base
-  has_many :items, :dependent => :destroy
+  has_many :items, :order => 'items.ordering ASC', :dependent => :destroy
 
   validates :owner, :presence => true
   validates :name, :format => /^[a-zA-Z0-9_]{1}[a-zA-Z0-9_\s]{2,48}[a-zA-Z0-9_]{1}$/
   validates :slug, :uniqueness => {:scope => :owner}
+  validates :ordering, :uniqueness => {:scope => :owner}
+  before_validation :assign_ordering
   before_validation :create_slug
+  after_destroy :reassign_priorities
+
+  def assign_ordering
+    self.ordering ||= 0
+    if self.changes.include?(:ordering)
+      lists = List.where(:owner => self.owner).order('ordering ASC') - [self]
+      lists.insert(self.ordering, self).each_with_index do |list, index|
+        List.where(:id => list.id).update_all(:ordering => index) unless list == self
+      end
+    end
+  end
 
   def create_slug
     if self.slug.nil? || self.changed.include?('name')
@@ -22,10 +35,34 @@ class List < ActiveRecord::Base
       end
     end
   end
+
+  def reassign_priorities
+    lists = List.where(:owner => self.owner).order('ordering ASC')
+    lists.each_with_index{|list, index| List.where(:id => list.id).update_all(:ordering => index)}
+  end
 end
 
 class Item < ActiveRecord::Base
   belongs_to :list
+
+  validates :ordering, :uniqueness => {:scope => :list_id}
+  before_validation :assign_ordering
+  after_destroy :reassign_priorities
+
+  def assign_ordering
+    self.ordering ||= 0
+    if self.changes.include?(:ordering)
+      items = self.list.items - [self]
+      items.insert(self.ordering, self).each_with_index do |item, index|
+        Item.where(:id => item.id).update_all(:ordering => index) unless item == self
+      end
+    end
+  end
+
+  def reassign_priorities
+    items = self.list.items
+    items.each_with_index{|item, index| Item.where(:id => item.id).update_all(:ordering => index)}
+  end
 end
 
 enable :sessions
@@ -64,7 +101,7 @@ get '/logout' do
 end
 
 get '/' do
-  @lists = List.where(:owner => @current_username)
+  @lists = List.where(:owner => @current_username).order('ordering ASC')
   erb :home
 end
 
@@ -77,8 +114,10 @@ end
 
 post '/lists/update/:slug' do
   redirect '/' unless @list = List.where(:owner => @current_username, :slug => params[:slug]).first
-  if @list.update_attributes!(:name => params[:name])
-    flash[:success] = 'List name updated successfully'
+  @list.name = params[:name] if params[:name]
+  @list.ordering = params[:ordering] if params[:ordering]
+  if @list.save!
+    flash[:success] = 'List updated successfully'
   else
     flash[:error] = @list.errors.full_messages.join(' ')
   end
@@ -106,8 +145,10 @@ end
 
 post '/items/update/:id' do
   redirect '/' unless @item = Item.includes(:list).where(:lists => {:owner => @current_username}, :id => params[:id]).first
-  if @item.update_attributes!(:note => params[:note])
-    flash[:success] = 'Note updated successfully'
+  @item.note = params[:note] if params[:note]
+  @item.ordering = params[:ordering] if params[:ordering]
+  if @item.save!
+    flash[:success] = 'Item updated successfully'
   else
     flash[:error] = @item.errors.full_messages.join(' ')
   end
