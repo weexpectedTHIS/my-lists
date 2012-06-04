@@ -1,3 +1,6 @@
+<script type="text/javascript">
+  Util.add_favicon('<%= @list.slug[0..2].upcase %>');
+</script>
 <div><a href="/">Home</a></div>
 <a href="#" id="item_new_link">New item</a>
 <form action="/items/create/<%= @list.slug %>" method="post" id="item_new_form" style="display: none;">

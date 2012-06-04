@@ -1,3 +1,38 @@
+var Util = {
+  add_favicon: function(text) {
+    var canvas = document.createElement('canvas');
+    canvas.height = canvas.width = 16;
+    ctx = canvas.getContext('2d');
+    // HEADER
+    ctx.beginPath();
+    ctx.moveTo(0, 4);
+    ctx.arcTo(0, 0, 4, 0, 4);
+    ctx.lineTo(12, 0);
+    ctx.arcTo(16, 0, 16, 4, 4);
+    ctx.lineTo(0, 4);
+    ctx.fillStyle = '#888888';
+    ctx.fill();
+    // BODY
+    ctx.beginPath();
+    ctx.moveTo(0, 4);
+    ctx.lineTo(16, 4);
+    ctx.lineTo(16, 12);
+    ctx.arcTo(16, 16, 12, 16, 4);
+    ctx.lineTo(4, 16);
+    ctx.arcTo(0, 16, 0, 12, 4);
+    ctx.lineTo(0, 4);
+    ctx.fillStyle = '#CCCCCC';
+    ctx.fill();
+    // TEXT
+    ctx.font = '12px "helvetica", sans-serif';
+    ctx.fillStyle = '#111111';
+    ctx.fillText(text, 1, 14, 14);
+    var link = $('<link />');
+    link.attr({'rel': 'icon', 'type': 'image/png', 'href': canvas.toDataURL('image/png')});
+    $('head').prepend(link);
+  }
+};
+
 $(document).ready(function(){
   $.validator.addMethod(
     'regex',
