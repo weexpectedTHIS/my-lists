@@ -102,6 +102,7 @@ end
 
 get '/' do
   @lists = List.where(:owner => @current_username).order('ordering ASC')
+  @icon = 'home'
   erb :home
 end
 
