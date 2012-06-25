@@ -211,6 +211,14 @@ $(document).ready(function(){
       $(this).next().show().find('textarea:first-child').focus();
       $(this).hide();
     });
+    $('.link_item_finish').click(function(){
+      $(this).next().show();
+      $(this).hide();
+    });
+    $('.link_item_unfinish').click(function(){
+      $(this).next().show();
+      $(this).hide();
+    });
     $('.link_item_destroy').click(function(){
       $(this).next().show();
       $(this).hide();

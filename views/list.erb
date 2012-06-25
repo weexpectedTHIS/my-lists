@@ -11,9 +11,9 @@
 </form>
 <br />
 <h2><%= @list.name %>:</h2>
-<% if @list.items.count > 0 %>
-  <div>
-    <% @list.items.each do |item| %>
+<div class="notes">
+  <% if @list.unfinished_items.count > 0 %>
+    <% @list.unfinished_items.each do |item| %>
       <div class="note">
         <%= item.ordering + 1 %> <%= item.note %>
         <span class="controls">
@@ -37,6 +37,13 @@
                 <input type="submit" value="Renotate">
               </span>
             </form>
+            <a href="#" class="link_item_finish">finish</a>
+            <form action="/items/update/<%= item.id %>" method="post" class="form_item_finish" style="display: none;">
+              <span>
+                <input type="hidden" name="finished" value="1">
+                <input type="submit" value="Really finish?">
+              </span>
+            </form>
             <a href="#" class="link_item_destroy">delete</a>
             <form action="/items/destroy/<%= item.id %>" method="post" class="form_item_destroy" style="display: none;">
               <span>
@@ -47,7 +54,34 @@
         </span>
       </div>
     <% end %>
-  </div>
-<% else %>
-  <div>None</div>
-<% end %>
+  <% else %>
+    None
+  <% end %>
+</div>
+<div class="notes finished">
+  <% if @list.finished_items.count > 0 %>
+    <% @list.finished_items.each do |item| %>
+      <div class="note finished">
+        <%= item.note %>
+        <span class="controls">
+          <a href="#" class="link_item_edit">edit</a>
+          <span class="display_none">
+            <a href="#" class="link_item_unfinish">unfinish</a>
+            <form action="/items/update/<%= item.id %>" method="post" class="form_item_unfinish" style="display: none;">
+              <span>
+                <input type="hidden" name="finished" value="0">
+                <input type="submit" value="Really unfinish?">
+              </span>
+            </form>
+            <a href="#" class="link_item_destroy">delete</a>
+            <form action="/items/destroy/<%= item.id %>" method="post" class="form_item_destroy" style="display: none;">
+              <span>
+                <input type="submit" value="Really delete?">
+              </span>
+            </form>
+          </span>
+        </span>
+      </div>
+    <% end %>
+  <% end %>
+</div>

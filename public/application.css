@@ -1,11 +1,13 @@
+.notes.finished {
+  opacity: 0.5;
+  padding-top: 5px;
+}
+
 .note {
   padding: 5px;
   border-radius: 4px;
   background-color: #EEEEEE;
   margin-bottom: 3px;
-}
-.note:last-child {
-  margin-bottom: 0px;
 }
 
 .display_none {
@@ -16,6 +18,6 @@
   margin-left: 8px;
 }
 
-.form_list_prioritize, .form_list_rename, .form_list_destroy, .form_item_prioritize, .form_item_renotate, .form_item_destroy {
+.form_list_prioritize, .form_list_rename, .form_list_destroy, .form_item_prioritize, .form_item_renotate, .form_item_finish, .form_item_unfinish, .form_item_destroy {
   display: inline;
 }

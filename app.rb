@@ -7,16 +7,18 @@ set :database, 'sqlite:///development.db'
 
 class List < ActiveRecord::Base
   has_many :items, :order => 'items.ordering ASC', :dependent => :destroy
+  has_many :unfinished_items, :class_name => 'Item', :foreign_key => 'list_id', :order => 'items.ordering ASC', :dependent => :destroy, :conditions => {:finished => false}
+  has_many :finished_items, :class_name => 'Item', :foreign_key => 'list_id', :order => 'items.ordering ASC', :dependent => :destroy, :conditions => {:finished => true}
 
   validates :owner, :presence => true
   validates :name, :format => /^[a-zA-Z0-9_]{1}[a-zA-Z0-9_\s]{2,48}[a-zA-Z0-9_]{1}$/
   validates :slug, :uniqueness => {:scope => :owner}
   validates :ordering, :uniqueness => {:scope => :owner}
-  before_validation :assign_ordering
+  before_validation :insert_into_ordering
   before_validation :create_slug
-  after_destroy :reassign_priorities
+  after_destroy :reassign_ordering
 
-  def assign_ordering
+  def insert_into_ordering
     self.ordering ||= 0
     if self.changes.include?(:ordering)
       lists = List.where(:owner => self.owner).order('ordering ASC') - [self]
@@ -36,7 +38,7 @@ class List < ActiveRecord::Base
     end
   end
 
-  def reassign_priorities
+  def reassign_ordering
     lists = List.where(:owner => self.owner).order('ordering ASC')
     lists.each_with_index{|list, index| List.where(:id => list.id).update_all(:ordering => index)}
   end
@@ -45,23 +47,34 @@ end
 class Item < ActiveRecord::Base
   belongs_to :list
 
-  validates :ordering, :uniqueness => {:scope => :list_id}
-  before_validation :assign_ordering
-  after_destroy :reassign_priorities
+  after_validation :assign_default_ordering
+  after_save :insert_into_ordering
+  after_save :finish_or_unfinish
+  after_destroy :reassign_ordering
 
-  def assign_ordering
+  def assign_default_ordering
     self.ordering ||= 0
-    if self.changes.include?(:ordering)
-      items = self.list.items - [self]
-      items.insert(self.ordering, self).each_with_index do |item, index|
-        Item.where(:id => item.id).update_all(:ordering => index) unless item == self
-      end
+  end
+
+  def insert_into_ordering
+    reassign_ordering if self.changes.include?(:ordering)
+  end
+
+  def finish_or_unfinish
+    if self.changes.include?(:finished)
+      self.ordering = 0
+      reassign_ordering 
     end
   end
 
-  def reassign_priorities
-    items = self.list.items
-    items.each_with_index{|item, index| Item.where(:id => item.id).update_all(:ordering => index)}
+  def reassign_ordering
+    [{:finished => false}, {:finished => true}].each do |conds|
+      items = self.list.items.where(conds).where('items.id != ?', self.id).to_a
+      items = items.insert(self.ordering, self) if conds[:finished] == self.finished? && !self.destroyed?
+      items.each_with_index do |item, index|
+        Item.where(:id => item.id).update_all(:ordering => index)
+      end
+    end
   end
 end
 
@@ -83,12 +96,12 @@ get '/login' do
 end
 
 post '/login' do
-  if params[:username] && params[:username].to_s.match(/^[a-zA-Z0-9]{4,}$/)
+  if params[:username] && params[:username].to_s.match(/^[a-zA-Z0-9]{4,20}$/)
     response.set_cookie('my_list_username', :value => params[:username], :expires => Date.today.next_year(2).to_time)
     flash[:success] = 'Login successful'
     redirect '/'
   else
-    flash[:error] = 'Username can only be numbers and letters and must be at least 4 characters long'
+    flash[:error] = 'Username can only be numbers and letters and must be between 4 and 20 characters inclusive'
     flash[:username] = params[:username]
     redirect '/login'
   end
@@ -139,7 +152,7 @@ end
 
 post '/items/create/:slug' do
   redirect '/' unless list = List.where(:owner => @current_username, :slug => params[:slug]).first
-  list.items.create!(:note => params[:note])
+  list.unfinished_items.create!(:note => params[:note])
   flash[:success] = 'Item created successfully'
   redirect "/lists/show/#{list.slug}"
 end
@@ -148,6 +161,7 @@ post '/items/update/:id' do
   redirect '/' unless @item = Item.includes(:list).where(:lists => {:owner => @current_username}, :id => params[:id]).first
   @item.note = params[:note] if params[:note]
   @item.ordering = params[:ordering] if params[:ordering]
+  @item.finished = params[:finished] if params[:finished]
   if @item.save!
     flash[:success] = 'Item updated successfully'
   else
