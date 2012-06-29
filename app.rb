@@ -93,7 +93,8 @@ get '/' do
   erb :home
 end
 
+require 'controllers/items'
 require 'controllers/logins'
+require 'controllers/list_owners'
 require 'controllers/lists'
 require 'controllers/pending_owners'
-require 'controllers/items'

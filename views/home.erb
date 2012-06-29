@@ -44,6 +44,15 @@
               </span>
               <span><a href="#" class="link_cancel">cancel</a></span>
             </form>
+            <% if list.list_owners.count > 1 %>
+              <a href="#" class="link_list_remove">remove</a>
+              <form action="/list_owners/destroy/<%= list.slug %>" method="post" class="form_list_remove" style="display: none;">
+                <span>
+                  <input type="submit" value="Really remove?">
+                </span>
+                <span><a href="#" class="link_cancel">cancel</a></span>
+              </form>
+            <% end %>
             <a href="#" class="link_list_destroy">delete</a>
             <form action="/lists/destroy/<%= list.slug %>" method="post" class="form_list_destroy" style="display: none;">
               <span>

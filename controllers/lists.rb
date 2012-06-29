@@ -26,5 +26,6 @@ end
 
 get '/lists/show/:slug' do
   redirect '/' unless @list = List.includes(:list_owners).where(:list_owners => {:owner => @current_username}, :slug => params[:slug]).first
+  @list.list_owners(true)
   erb :list
 end

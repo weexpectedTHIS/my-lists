@@ -218,8 +218,8 @@ $(document).ready(function(){
         }
       );
     }
-    $('.link_list_prioritize').click(function(){
-      $(this).next().show().find('select:first-child').focus();
+    $('.link_list_remove').click(function(){
+      $(this).next().show();
       $(this).hide();
     });
     $('.link_list_rename').click(function(){
