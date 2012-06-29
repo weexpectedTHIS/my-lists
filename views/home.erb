@@ -8,42 +8,50 @@
     <input type="submit" value="Create list">
   </div>
 </form>
-
 <br />
+<% if @pending_owners.present? %>
+  <h2>Pending shared lists:</h2>
+  <% @pending_owners.each do |po| %>
+    <div class="pending_owner">
+      "<%= po.requester %>" would like to share "<%= po.list.name %>" with you. <a href="/pending_owners/destroy/<%= po.list.slug %>/accept" class="link_pending_owner">accept</a> <a href="/pending_owners/destroy/<%= po.list.slug %>/decline" class="link_pending_owner">decline</a>
+    </div>
+  <% end %>
+<% end %>
+
 <br />
 <h2>Lists:</h2>
 <% if @lists.size > 0 %>
   <div>
     <% @lists.each do |list| %>
       <div>
-        <%= list.ordering + 1 %> <a href="/lists/show/<%= list.slug %>"><%= list.name %></a>
+        <a href="/lists/show/<%= list.slug %>"><%= list.name %></a>
         <span class="controls">
           <a href="#" class="link_list_edit">edit</a>
           <span class="display_none">
-            <a href="#" class="link_list_prioritize">prioritize</a>
-            <form action="/lists/update/<%= list.slug %>" method="post" class="form_list_prioritize" style="display: none;">
-              <span>
-                <select name="ordering">
-                  <% (1..@lists.size).each do |priority| %>
-                    <option value="<%= priority - 1 %>" <%= 'selected' if priority == (list.ordering + 1) %>><%= priority %></option>
-                  <% end %>
-                </select>
-                <input type="submit" value="Prioritize">
-              </span>
-            </form>
             <a href="#" class="link_list_rename">rename</a>
             <form action="/lists/update/<%= list.slug %>" method="post" class="form_list_rename" style="display: none;">
               <span>
                 <input type="text" name="name" value="<%= list.name %>">
                 <input type="submit" value="Rename">
               </span>
+              <span><a href="#" class="link_cancel">cancel</a></span>
+            </form>
+            <a href="#" class="link_list_share">share</a>
+            <form action="/pending_owners/create/<%= list.slug %>" method="post" class="form_list_share" style="display: none;">
+              <span>
+                <input type="text" name="owner" value="">
+                <input type="submit" value="Share">
+              </span>
+              <span><a href="#" class="link_cancel">cancel</a></span>
             </form>
             <a href="#" class="link_list_destroy">delete</a>
             <form action="/lists/destroy/<%= list.slug %>" method="post" class="form_list_destroy" style="display: none;">
               <span>
                 <input type="submit" value="Really delete?">
               </span>
+              <span><a href="#" class="link_cancel">cancel</a></span>
             </form>
+            <a href="#" class="link_cancel_all">cancel</a>
           </span>
         </span>
       </div>

@@ -13,11 +13,30 @@
 .display_none {
   display: none;
 }
+.display_inline {
+  display: inline;
+}
 
 .controls {
   margin-left: 8px;
 }
 
-.form_list_prioritize, .form_list_rename, .form_list_destroy, .form_item_prioritize, .form_item_renotate, .form_item_finish, .form_item_unfinish, .form_item_destroy {
+.form_list_prioritize, .form_list_rename, .form_list_share, .form_list_destroy, .form_item_prioritize, .form_item_renotate, .form_item_finish, .form_item_unfinish, .form_item_destroy {
   display: inline;
+  padding: 4px;
+  border-radius: 3px;
+  background-color: #DDDDDD;
+  margin-right: 3px;
+}
+
+.pending_owner {
+  background-color: #ffd6dd;
+  padding: 4px;
+  margin: 2px;
+  border-radius: 3px;
+}
+
+h2 span.owners {
+  font-size: 16px;
+  color: #CCCCCC;
 }

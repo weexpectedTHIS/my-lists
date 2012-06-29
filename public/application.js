@@ -150,6 +150,15 @@ var Util = {
 };
 
 $(document).ready(function(){
+  // COMMON JS
+  $('.link_cancel').click(function(){
+    $(this).parent().parent().prev().show().next().hide();
+  });
+  $('.link_cancel_all').click(function(){
+    $(this).parent().find('.link_cancel').click();
+    $(this).parent().prev().show().next().hide();
+  });
+
   $.validator.addMethod(
     'regex',
     function(value, element, regexp) {
@@ -161,6 +170,20 @@ $(document).ready(function(){
   // GLOBAL PREVENTION OF HREF PROPOGATION FOR JS LINKS
   $('a[href^=#], a[data-remote=true]').click(function(e){ e.preventDefault(); });
 
+
+  // LOGIN
+  if ($('#form_login').length > 0) {
+    $('#form_login').validate();
+    $('#form_login input[type="text"]').rules('add',
+      {
+        required: true,
+        messages: {regex: 'Must be between 4 and 20 characters using only letters, numbers, and underscores'},
+        regex: /^[a-zA-Z0-9]{1}[a-zA-Z0-9_]{2,18}[a-zA-Z0-9]{1}$/
+      }
+    );
+  }
+
+
   // HOME
   if ($('#list_new_form').length > 0) {
     $('#list_new_link').click(function(){
@@ -170,10 +193,31 @@ $(document).ready(function(){
     $('#list_new_form').validate();
     $('#form_list_name').rules('add', { required: true, regex: /^[a-zA-Z0-9_]{1}[a-zA-Z0-9_\s]{2,48}[a-zA-Z0-9_]{1}$/ });
 
+    $('.link_pending_owner').click(function(e){
+      e.preventDefault();
+      var form = $('<form action="' + $(this).attr('href') + '" method="post" class="display_inline"></form>');
+      $(this).after(form);
+      form.submit();
+    });
+
     $('.link_list_edit').click(function(){
       $(this).next().show().find('input:first-child').focus();
       $(this).hide();
     });
+    $('.link_list_share').click(function(){
+      $(this).next().show().find('input:first-child').focus();
+      $(this).hide();
+    });
+    if ($('.form_list_share').length > 0) {
+      $('.form_list_share').validate();
+      $('.form_list_share input[type="text"]').rules('add',
+        {
+          required: true,
+          messages: {regex: 'Must be between 4 and 20 characters using only letters, numbers, and underscores'},
+          regex: /^[a-zA-Z0-9]{1}[a-zA-Z0-9_]{2,18}[a-zA-Z0-9]{1}$/
+        }
+      );
+    }
     $('.link_list_prioritize').click(function(){
       $(this).next().show().find('select:first-child').focus();
       $(this).hide();
@@ -186,8 +230,10 @@ $(document).ready(function(){
       $(this).next().show();
       $(this).hide();
     });
-    $('.form_list_rename').validate();
-    $('.form_list_rename input[type="text"]').rules('add', { required: true, regex: /^[a-zA-Z0-9_]{1}[a-zA-Z0-9_\s]{2,48}[a-zA-Z0-9_]{1}$/ });
+    if ($('.form_list_rename').length > 0) {
+      $('.form_list_rename').validate();
+      $('.form_list_rename input[type="text"]').rules('add', { required: true, regex: /^[a-zA-Z0-9_]{1}[a-zA-Z0-9_\s]{2,48}[a-zA-Z0-9_]{1}$/ });
+    }
   }
 
 

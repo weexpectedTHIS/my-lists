@@ -10,7 +10,7 @@
   </div>
 </form>
 <br />
-<h2><%= @list.name %>:</h2>
+<h2><%= @list.name %>: <span class="owners">(Owners: <%= @list.list_owners.map(&:owner).join(', ') %>)</span></h2>
 <div class="notes">
   <% if @list.unfinished_items.count > 0 %>
     <% @list.unfinished_items.each do |item| %>
@@ -29,6 +29,7 @@
                 </select>
                 <input type="submit" value="Prioritize">
               </span>
+              <span><a href="#" class="link_cancel">cancel</a></span>
             </form>
             <a href="#" class="link_item_renotate">renotate</a>
             <form action="/items/update/<%= item.id %>" method="post" class="form_item_renotate" style="display: none;">
@@ -36,6 +37,7 @@
                 <textarea name="note" class="required"><%= item.note %></textarea>
                 <input type="submit" value="Renotate">
               </span>
+              <span><a href="#" class="link_cancel">cancel</a></span>
             </form>
             <a href="#" class="link_item_finish">finish</a>
             <form action="/items/update/<%= item.id %>" method="post" class="form_item_finish" style="display: none;">
@@ -43,13 +45,16 @@
                 <input type="hidden" name="finished" value="1">
                 <input type="submit" value="Really finish?">
               </span>
+              <span><a href="#" class="link_cancel">cancel</a></span>
             </form>
             <a href="#" class="link_item_destroy">delete</a>
             <form action="/items/destroy/<%= item.id %>" method="post" class="form_item_destroy" style="display: none;">
               <span>
                 <input type="submit" value="Really delete?">
               </span>
+              <span><a href="#" class="link_cancel">cancel</a></span>
             </form>
+            <a href="#" class="link_cancel_all">cancel</a>
           </span>
         </span>
       </div>
