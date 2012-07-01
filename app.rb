@@ -86,15 +86,8 @@ before do
   end
 end
 
-get '/' do
-  @lists = List.includes(:list_owners).where(:list_owners => {:owner => @current_username}).order('name ASC')
-  @pending_owners = PendingOwner.where(:owner => @current_username).order('id ASC')
-  @icon = 'home'
-  erb :home
-end
-
 require 'controllers/items'
-require 'controllers/logins'
 require 'controllers/list_owners'
 require 'controllers/lists'
+require 'controllers/logins'
 require 'controllers/pending_owners'

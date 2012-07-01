@@ -1,3 +1,10 @@
+get '/' do
+  @lists = List.includes(:list_owners).where(:list_owners => {:owner => @current_username}).order('name ASC')
+  @pending_owners = PendingOwner.where(:owner => @current_username).order('id ASC')
+  @icon = 'home'
+  erb :home
+end
+
 post '/lists/create' do
   list = List.includes(:list_owners).where(:list_owners => {:owner => @current_username}, :name => params[:name]).first
   list ||= List.create!(:list_owners => [ListOwner.new(:owner => @current_username)], :name => params[:name])
