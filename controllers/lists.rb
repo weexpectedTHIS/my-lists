@@ -6,8 +6,7 @@ get '/' do
 end
 
 post '/lists/create' do
-  list = List.includes(:list_owners).where(:list_owners => {:owner => @current_username}, :name => params[:name]).first
-  list ||= List.create!(:list_owners => [ListOwner.new(:owner => @current_username)], :name => params[:name])
+  list = List.create!(:list_owners => [ListOwner.new(:owner => @current_username)], :name => params[:name])
   flash[:success] = "List: #{list.name} created successfully"
   redirect "/lists/show/#{list.slug}"
 end
