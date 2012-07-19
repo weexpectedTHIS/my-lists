@@ -3,10 +3,9 @@
 </script>
 <a href="#" id="list_new_link">New list</a>
 <form action="/lists/create" method="post" id="list_new_form" style="display: none;">
-  <div>
-    Name: <input type="text" name="name" id="form_list_name">
-    <input type="submit" value="Create list">
-  </div>
+  Name: <input type="text" name="name" id="form_list_name">
+  <input type="submit" value="Create list">
+  <span><a href="#" class="link_cancel">cancel</a></span>
 </form>
 <br />
 <% if @pending_owners.present? %>
@@ -23,19 +22,21 @@
 <% if @lists.size > 0 %>
   <div>
     <% @lists.each do |list| %>
-      <div>
-        <a href="/lists/show/<%= list.slug %>"><%= list.name %></a>
+      <div class="list">
+        <a href="/lists/show/<%= list.slug %>" class="name"><%= list.name %></a>
         <span class="controls">
           <a href="#" class="link_list_edit">edit</a>
           <span class="display_none">
-            <a href="#" class="link_list_rename">rename</a>
-            <form action="/lists/update/<%= list.slug %>" method="post" class="form_list_rename" style="display: none;">
-              <span>
-                <input type="text" name="name" value="<%= list.name %>">
-                <input type="submit" value="Rename">
-              </span>
-              <span><a href="#" class="link_cancel">cancel</a></span>
-            </form>
+            <span class="control">
+              <a href="#" class="link_list_rename">rename</a>
+              <form action="/lists/update/<%= list.slug %>" method="post" class="form_list_rename" style="display: none;">
+                <span>
+                  <input type="text" name="name" value="<%= list.name %>">
+                  <input type="submit" value="Rename">
+                </span>
+                <span><a href="#" class="link_cancel">cancel</a></span>
+              </form>
+            </span>
             <a href="#" class="link_list_share">share</a>
             <form action="/pending_owners/create/<%= list.slug %>" method="post" class="form_list_share" style="display: none;">
               <span>
@@ -64,6 +65,7 @@
           </span>
         </span>
       </div>
+      <div class="clear_both"></div>
     <% end %>
   </div>
 <% else %>

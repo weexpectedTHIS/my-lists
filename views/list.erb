@@ -15,22 +15,29 @@
   <% if @list.unfinished_items.count > 0 %>
     <% @list.unfinished_items.each do |item| %>
       <div class="note">
-        <%= item.ordering + 1 %> <%= item.note %>
+        <span class="ordering">
+          <%= item.ordering + 1 %>
+        </span>
+        <span class="name">
+          <%= item.note %>
+        </span>
         <span class="controls">
           <a href="#" class="link_item_edit">edit</a>
           <span class="display_none">
-            <a href="#" class="link_item_prioritize">prioritize</a>
-            <form action="/items/update/<%= item.id %>" method="post" class="form_item_prioritize" style="display: none;">
-              <span>
-                <select name="ordering">
-                  <% (1..@list.items.size).each do |priority| %>
-                    <option value="<%= priority - 1 %>" <%= 'selected' if priority == (item.ordering + 1) %>><%= priority %></option>
-                  <% end %>
-                </select>
-                <input type="submit" value="Prioritize">
-              </span>
-              <span><a href="#" class="link_cancel">cancel</a></span>
-            </form>
+            <span class="control">
+              <a href="#" class="link_item_prioritize">prioritize</a>
+              <form action="/items/update/<%= item.id %>" method="post" class="form_item_prioritize" style="display: none;">
+                <span>
+                  <select name="ordering">
+                    <% (1..@list.items.size).each do |priority| %>
+                      <option value="<%= priority - 1 %>" <%= 'selected' if priority == (item.ordering + 1) %>><%= priority %></option>
+                    <% end %>
+                  </select>
+                  <input type="submit" value="Prioritize">
+                </span>
+                <span><a href="#" class="link_cancel">cancel</a></span>
+              </form>
+            </span>
             <a href="#" class="link_item_renotate">renotate</a>
             <form action="/items/update/<%= item.id %>" method="post" class="form_item_renotate" style="display: none;">
               <span>
@@ -58,6 +65,7 @@
           </span>
         </span>
       </div>
+      <div class="clear_both"></div>
     <% end %>
   <% else %>
     None
